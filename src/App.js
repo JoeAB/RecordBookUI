@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useState } from 'react';
 import { searchData, getSearchResult } from './contractAccess/MdParcelDataAccess';
+import { getTempData } from './dataProvider/tempDataProvider';
 import { mintRealEstateNFT } from './contractAccess/RealEstateNftAccess';
 import './App.css';
 
@@ -15,6 +16,8 @@ function App() {
   const [calledOnce, setCalledOnce] = useState(false);
   const [defaultAccount, setDefaultAccount] = useState(null);
   const [defaultProvider, setDefaultProvider] = useState(null);
+  const [improvements, setImprovements] = useState(null);
+  const [finalValue, setFinalValue] = useState(null);
 
   function handleAddressChanged(e) {
     setStreetAddress(e.target.value);
@@ -34,9 +37,23 @@ function App() {
   async function lookup() {
     await handleSearch();
     //value not on chain, need to add it
-    if(initialAssessedValue){
+    if(initialAssessedValue == null){
       await searchData(streetAddress, defaultAccount);
       alert("Value needed to be populated on chain. Please check again in a few minutes and the status should be updated");
+    } else {
+        const improvementArray = getTempData();
+        setImprovements(improvementArray);
+        const sumOfValues = improvementArray.reduce((accumulator, currentValue) => {
+          // Check if the "Value" property exists in the current object
+          if ('Value' in currentValue) {
+            // Add the current value to the accumulator
+            return accumulator + currentValue.Value;
+          } else {
+            // If "Value" property is missing, return accumulator unchanged
+            return accumulator;
+          }
+        }, initialAssessedValue);
+        setFinalValue(sumOfValues);
     }
   }
 
@@ -66,7 +83,7 @@ function App() {
     <div className="App">
       <Container>
         <Row>
-          <Col><p>Below you will be able to enter </p></Col>
+          <Col><p>Below you will be able to enter an address for a property in Maryland and get back information relate dto current valuation based on government valuation and improvements made the past year.</p></Col>
         </Row>
         <Row>
           <Col>Eneter Street Address of Home</Col>
@@ -87,6 +104,20 @@ function App() {
             </Col>
           }
         </Row>
+        { improvements != null &&  improvements.map((item) =>
+                (
+                  <Row>
+                    <Col>{item.Title}: {item.Value}</Col>
+                  </Row>
+                ))
+        }
+        { finalValue != null && 
+          <Row>
+            <Col>
+              Final Assessed Value: {finalValue}
+            </Col>
+          </Row>
+        }
       </Container>
     </div>
   );

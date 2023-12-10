@@ -43,7 +43,6 @@ export async function searchData(addressLookUp, signer) {
       );
     try {
       // Call the sendRequest function of the contract
-      alert(parcelDataContract.runner);
       await parcelDataContract.sendRequest(addressLookUp);
 
     } catch (error) {
