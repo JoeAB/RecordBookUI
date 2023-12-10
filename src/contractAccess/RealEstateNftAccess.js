@@ -17,7 +17,7 @@ export async function mintRealEstateNFT(streetAddress, state, initialAssessedVal
         initialValue: String(initialAssessedValue)
     };
 
-    const nftstorage = new NFTStorage({ token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGExRDU3MWEzZkFENzAwRWQ4QmJDMzlkRTM3REQwMjA0NTA3NzgwODIiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY4Mjg2MDk4MzYzMCwibmFtZSI6InRlc3RORlRQb2x5In0.fDWljOONJq7F6texYx7Wgj7BmgGxrop9vIyKLqk1ZGQ" })
+    const nftstorage = new NFTStorage({ token: process.env.REACT_APP_NFT_SECRET });
 
     const token = await nftstorage.store({ image: new File([],"RealEstate"), name: "Real Estate Asset - "+streetAddress,
             description: JSON.stringify(metadata)});
