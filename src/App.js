@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useState } from 'react';
 import { searchData, getSearchResult } from './contractAccess/MdParcelDataAccess';
+import { mintRealEstateNFT } from './contractAccess/RealEstateNftAccess';
 import './App.css';
 
 
@@ -13,6 +14,7 @@ function App() {
   const [initialAssessedValue, setInitialAssessedValue] = useState(null);
   const [calledOnce, setCalledOnce] = useState(false);
   const [defaultAccount, setDefaultAccount] = useState(null);
+  const [defaultProvider, setDefaultProvider] = useState(null);
 
   function handleAddressChanged(e) {
     setStreetAddress(e.target.value);
@@ -24,6 +26,7 @@ function App() {
       var splitLabel = element.split(":");
       if(splitLabel[0].toLocaleLowerCase() === streetAddress.toLocaleLowerCase()){
         setInitialAssessedValue(Number(splitLabel[1]));
+        mintRealEstateNFT(splitLabel[0], "MD", initialAssessedValue, defaultAccount);
       }
     });
   }
@@ -51,6 +54,7 @@ function App() {
         provider = new ethers.BrowserProvider(window.ethereum)
         signer = await provider.getSigner();
         setDefaultAccount(signer);
+        setDefaultProvider(provider);
     }
  }
 

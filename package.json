@@ -10,6 +10,7 @@
     "ethers": "^6.9.0",
     "ipfs-http-client": "^60.0.1",
     "jsdom": "^23.0.1",
+    "nft.storage": "^7.1.1",
     "node-fetch": "^3.3.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.1",

@@ -1,30 +1,29 @@
 import RealEstateABI from './RealEstateNftABI.json';
-const { ethers } = require("ethers");
-const IPFS = require("ipfs-http-client");
+import { NFTStorage } from 'nft.storage'
 
-const polygonRPC = "https://rpc-mumbai.maticvigil.com/";
-const privateKey = "YOUR_PRIVATE_KEY";
-const ipfs = IPFS.create();
+const { ethers } = require("ethers");
 
 const contractABI = RealEstateABI;
-const contractAddress = "0x63827e1E66f79ef9E93c15292AAA59205d88720c";
+const contractAddress = "0x29e43576c9A7EBcf38c0ded93d32E0ab06934977";
 
-async function mintRealEstateNFT(streetAddress, state, initialAssessedValue) {
-    const provider = new ethers.providers.JsonRpcProvider(polygonRPC);
-    const wallet = new ethers.Wallet(privateKey, provider);
+export async function mintRealEstateNFT(streetAddress, state, initialAssessedValue, signer) {
 
-    const contract = new ethers.Contract(contractAddress, contractABI, wallet);
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     // Upload metadata to IPFS
     const metadata = {
-        name: streetAddress + ", "+ state,
-        initialValue: initialAssessedValue,
+        streetAddress: streetAddress,
+        state: state,
+        initialValue: String(initialAssessedValue)
     };
 
-    const uploaded = await ipfs.add(JSON.stringify(metadata));
+    const nftstorage = new NFTStorage({ token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGExRDU3MWEzZkFENzAwRWQ4QmJDMzlkRTM3REQwMjA0NTA3NzgwODIiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY4Mjg2MDk4MzYzMCwibmFtZSI6InRlc3RORlRQb2x5In0.fDWljOONJq7F6texYx7Wgj7BmgGxrop9vIyKLqk1ZGQ" })
+
+    const token = await nftstorage.store({ image: new File([],"RealEstate"), name: "Real Estate Asset - "+streetAddress,
+            description: JSON.stringify(metadata)});
 
     // Mint NFT with metadata IPFS hash
-    const tx = await contract.mint(wallet.address, uploaded.path);
+    const tx = await contract.mint(signer.address, token.url);
 
     console.log("NFT Minted:", tx.hash);
 }
