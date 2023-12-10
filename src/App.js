@@ -25,19 +25,22 @@ function App() {
 
   async function handleSearch() {
     let searchResponse = await getSearchResult();
+    let responseValue = 0;
     searchResponse.forEach(element => {
       var splitLabel = element.split(":");
       if(splitLabel[0].toLocaleLowerCase() === streetAddress.toLocaleLowerCase()){
         setInitialAssessedValue(Number(splitLabel[1]));
-        mintRealEstateNFT(splitLabel[0], "MD", initialAssessedValue, defaultAccount);
+        responseValue = Number(splitLabel[1])
       }
     });
+    return responseValue;
   }
 
   async function lookup() {
-    await handleSearch();
+    const value = await handleSearch();
+    alert(value);
     //value not on chain, need to add it
-    if(initialAssessedValue == null){
+    if(value == null){
       await searchData(streetAddress, defaultAccount);
       alert("Value needed to be populated on chain. Please check again in a few minutes and the status should be updated");
     } else {
@@ -52,8 +55,13 @@ function App() {
             // If "Value" property is missing, return accumulator unchanged
             return accumulator;
           }
-        }, initialAssessedValue);
+        }, value);
         setFinalValue(sumOfValues);
+        try{
+          await mintRealEstateNFT(streetAddress, "MD", value, defaultAccount);
+        } catch(exception){
+          console.log(exception);
+        }
     }
   }
 
