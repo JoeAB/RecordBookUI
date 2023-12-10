@@ -66,6 +66,9 @@ function App() {
     <div className="App">
       <Container>
         <Row>
+          <Col><p>Below you will be able to enter </p></Col>
+        </Row>
+        <Row>
           <Col>Eneter Street Address of Home</Col>
           <Col>
             <input value={streetAddress}

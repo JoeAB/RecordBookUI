@@ -4,7 +4,7 @@ import { NFTStorage } from 'nft.storage'
 const { ethers } = require("ethers");
 
 const contractABI = RealEstateABI;
-const contractAddress = "0x29e43576c9A7EBcf38c0ded93d32E0ab06934977";
+const contractAddress = "0x7F423aF9E2c300B62342dfeA2a2F2aEb3Bc7D5BE";
 
 export async function mintRealEstateNFT(streetAddress, state, initialAssessedValue, signer) {
 
@@ -23,6 +23,7 @@ export async function mintRealEstateNFT(streetAddress, state, initialAssessedVal
             description: JSON.stringify(metadata)});
 
     // Mint NFT with metadata IPFS hash
+    console.log(signer.address);
     const tx = await contract.mint(signer.address, token.url);
 
     console.log("NFT Minted:", tx.hash);
